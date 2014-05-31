@@ -1,0 +1,15 @@
+@(message: String)
+
+@main("Welcome to Play") {
+
+    @if(flash().containsKey("message")) {
+        <section>
+            <h4 style="color:rgb(124,178,50);" id="message">
+                @flash.get("message")
+            </h4>
+        </section>
+    }
+
+    @play20.welcome(message, style = "Java")
+
+}
