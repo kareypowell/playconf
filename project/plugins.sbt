@@ -9,3 +9,7 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.2.3")
 
 // Fix issue in intelliJ idea for reverse routing
 addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
+
+resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases"
+
+addSbtPlugin("net.litola" % "play-sass" % "0.3.0")

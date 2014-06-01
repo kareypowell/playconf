@@ -1,6 +1,5 @@
 package controllers;
 
-import play.*;
 import play.mvc.*;
 import play.data.*;
 import views.html.*;
@@ -11,11 +10,8 @@ public class Application extends Controller {
     private static final Form<Proposal> proposalForm = Form.form(Proposal.class);
 
     public static Result index() {
-        return ok(index.render("Hello Karey, your application is ready."));
-    }
-
-    public static Result welcome(String name) {
-        return ok("<h1>Welcome, " + name + "</h1>").as("text/html");
+        Proposal keynote = Proposal.findKeynote();
+        return ok(views.html.index.render(keynote));
     }
 
     public static Result newProposal() {

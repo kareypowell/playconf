@@ -4,7 +4,6 @@
 
 # Home page
 GET     /                           controllers.Application.index()
-GET     /welcome/:name              controllers.Application.welcome(name)
 GET     /proposal/new               controllers.Application.newProposal()
 
 POST    /proposal                   controllers.Application.submitProposal()

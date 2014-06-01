@@ -1,3 +1,7 @@
+import play.Project._
+
+import net.litola.SassPlugin
+
 name := "playconf"
 
 version := "1.0-SNAPSHOT"
@@ -11,4 +15,5 @@ libraryDependencies ++= Seq(
   "org.webjars" % "bootstrap" % "3.1.1-1"
 )     
 
-play.Project.playJavaSettings
+play.Project.playJavaSettings ++ SassPlugin.sassSettings
+
