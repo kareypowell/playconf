@@ -6,8 +6,14 @@
 GET     /                           controllers.Application.index()
 GET     /proposal/new               controllers.Application.newProposal()
 GET     /proposal/buzz              controllers.Application.buzz()
+GET     /register                   controllers.Application.register()
+GET     /register_callback          controllers.Application.registerCallback()
 
 POST    /proposal                   controllers.Application.submitProposal()
 
+# For testing
+GET     /simulate/registration      controllers.Simulator.simulateRegistration()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /webjars/*file              controllers.WebJarAssets.at(file)

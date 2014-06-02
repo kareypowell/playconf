@@ -25,17 +25,18 @@ public class EventPublisher extends UntypedActor {
 
     @Override
     public void onReceive(Object message) throws Exception {
-        if (message instanceof NewConnectionEvent) {
+        // TODO add event handling logic
+        if(message instanceof NewConnectionEvent) {
             final NewConnectionEvent nce = (NewConnectionEvent) message;
             connections.put(nce.uuid(), nce.out());
-            Logger.info("New browswer connected " + nce.uuid());
-        } else if (message instanceof CloseConnectionEvent) {
+            Logger.info("New browser connected " + nce.uuid());
+        } else if(message instanceof CloseConnectionEvent) {
             final CloseConnectionEvent cce = (CloseConnectionEvent) message;
             final String uuid = cce.uuid();
-            connections.remove(cce.uuid());
-            Logger.info("Browser " + uuid + " is disconnected");
-        } else if (message instanceof NewProposalEvent) {
-            broadcastEvent((UserEvent) message);
+            connections.remove(uuid);
+            Logger.info("Browser " + uuid + "is disconnected");
+        } else if(message instanceof UserEvent) {
+            broadcastEvent((UserEvent)message);
         } else {
             unhandled(message);
         }

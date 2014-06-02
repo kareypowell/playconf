@@ -11,8 +11,20 @@ create table proposal (
   is_approved               tinyint(1) default 0,
   keywords                  varchar(255),
   speaker_id                bigint,
+  created_at                datetime,
+  updated_at                datetime,
   constraint ck_proposal_type check (type in (0,1)),
   constraint pk_proposal primary key (id))
+;
+
+create table registered_user (
+  id                        bigint auto_increment not null,
+  name                      varchar(255),
+  description               varchar(255),
+  picture_url               varchar(255),
+  twitter_id                varchar(255),
+  registration_date         date,
+  constraint pk_registered_user primary key (id))
 ;
 
 create table speaker (
@@ -22,6 +34,8 @@ create table speaker (
   bio                       varchar(1000),
   twitter_id                varchar(255),
   picture_url               varchar(255),
+  created_at                datetime,
+  updated_at                datetime,
   constraint pk_speaker primary key (id))
 ;
 
@@ -35,6 +49,8 @@ create index ix_proposal_speaker_1 on proposal (speaker_id);
 SET FOREIGN_KEY_CHECKS=0;
 
 drop table proposal;
+
+drop table registered_user;
 
 drop table speaker;
 

@@ -3,6 +3,7 @@ package models;
 import javax.persistence.*;
 import javax.validation.Valid;
 
+import org.joda.time.DateTime;
 import play.Logger;
 import play.db.ebean.Model;
 import play.data.validation.Constraints.*;
@@ -10,6 +11,8 @@ import play.data.validation.Constraints.*;
 import play.libs.Akka;
 import play.libs.F.*;
 import scala.concurrent.ExecutionContext;
+
+import java.sql.Date;
 
 /**
  * Created by kareypowell on 5/31/14.
@@ -41,6 +44,10 @@ public class Proposal extends Model {
     @Valid
     @OneToOne(cascade = CascadeType.ALL)
     public Speaker speaker;
+
+    public DateTime createdAt = new DateTime();
+
+    public DateTime updatedAt = new DateTime();
 
     private static Finder<Long, Proposal> find = new Finder<Long, Proposal>(Long.class, Proposal.class);
 
@@ -83,11 +90,11 @@ public class Proposal extends Model {
         return Promise.promise(new Function0<Proposal>() {
             @Override
             public Proposal apply() throws Throwable {
-                // randomly select one of the first
+                // randomly select one if the first
                 Long randomId = (long) (1 + Math.random() * (5 - 1));
                 return Proposal.find.byId(randomId);
             }
-        }, ctx);
+        } , ctx);
     }
 
 }

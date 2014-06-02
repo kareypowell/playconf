@@ -1,6 +1,8 @@
 package models;
 
 import javax.persistence.*;
+
+import org.joda.time.DateTime;
 import play.db.ebean.Model;
 import play.data.validation.Constraints.*;
 
@@ -32,5 +34,9 @@ public class Speaker extends Model {
 
     @Required
     public String pictureUrl;
+
+    public DateTime createdAt = new DateTime();
+
+    public DateTime updatedAt = new DateTime();
 
 }

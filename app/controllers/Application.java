@@ -4,9 +4,14 @@ import actors.EventPublisher;
 import actors.messages.CloseConnectionEvent;
 import actors.messages.NewConnectionEvent;
 import actors.messages.NewProposalEvent;
+import actors.messages.UserRegistrationEvent;
 import akka.actor.ActorRef;
 import com.fasterxml.jackson.databind.JsonNode;
+import external.services.OAuthService;
+import external.services.TwitterOAuthService;
+import play.Play;
 import play.libs.F.*;
+import play.libs.OAuth.RequestToken;
 import play.mvc.*;
 import play.data.*;
 import models.*;
@@ -14,6 +19,36 @@ import models.*;
 public class Application extends Controller {
 
     private static final Form<Proposal> proposalForm = Form.form(Proposal.class);
+
+    private static final OAuthService service = new TwitterOAuthService(
+                Play.application().configuration().getString("twitter.consumer.key"),
+                Play.application().configuration().getString("twitter.consumer.secret")
+            );
+
+    public static Result register() {
+        String callbackUrl = routes.Application.registerCallback().absoluteURL(request());
+        Tuple<String, RequestToken> t = service.retrieveRequestToken(callbackUrl);
+        flash("request_token", t._2.token);
+        flash("request_secret", t._2.secret);
+        return redirect(t._1);
+    }
+
+    public static Result registerCallback() {
+        RequestToken token = new RequestToken(flash("request_token"), flash("request_secret"));
+        String authVerifier = request().getQueryString("oauth_verifier");
+        Promise<JsonNode> userProfile = service.registeredUserProfile(token, authVerifier);
+
+        userProfile.onRedeem(new Callback<JsonNode>() {
+            @Override
+            public void invoke(JsonNode twitterJson) throws Throwable {
+                RegisteredUser user = RegisteredUser.fromJson(twitterJson);
+                user.save();
+                EventPublisher.ref.tell(new UserRegistrationEvent(user), ActorRef.noSender());
+            }
+        });
+
+        return redirect(routes.Application.index());
+    }
 
     public static WebSocket<JsonNode> buzz() {
         return new WebSocket<JsonNode>() {
