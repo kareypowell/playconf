@@ -5,6 +5,7 @@
 # Home page
 GET     /                           controllers.Application.index()
 GET     /proposal/new               controllers.Application.newProposal()
+GET     /proposal/buzz              controllers.Application.buzz()
 
 POST    /proposal                   controllers.Application.submitProposal()
 

@@ -12,7 +12,7 @@ showProposal = (json) ->
   $("#twitterId").attr "href", "https://twitter.com/" + json.twitterId
   $("#twitterId").html json.twitterId
   $("#title").html json.title
-  $("#proposal").html json.proposal
+  $("#proposal").html json.content
   
 showRegisteredUser = (json) ->
   article = $("#buzz").find("article:first").remove()

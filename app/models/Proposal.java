@@ -3,8 +3,13 @@ package models;
 import javax.persistence.*;
 import javax.validation.Valid;
 
+import play.Logger;
 import play.db.ebean.Model;
 import play.data.validation.Constraints.*;
+
+import play.libs.Akka;
+import play.libs.F.*;
+import scala.concurrent.ExecutionContext;
 
 /**
  * Created by kareypowell on 5/31/14.
@@ -38,7 +43,51 @@ public class Proposal extends Model {
     public Speaker speaker;
 
     private static Finder<Long, Proposal> find = new Finder<Long, Proposal>(Long.class, Proposal.class);
-    public static Proposal findKeynote() {
-        return find.where().eq("type", SessionType.Keynote).findUnique();
+
+    private static ExecutionContext ctx = Akka.system().dispatchers().lookup("akka.db-dispatcher");
+
+    public static Promise<Proposal> findKeynote() {
+        return Promise.promise(new Function0<Proposal>() {
+            @Override
+            public Proposal apply() throws Throwable {
+                return find.where().eq("type", SessionType.Keynote).findUnique();
+            }
+        }, ctx).recover(new Function<Throwable, Proposal>() {
+            @Override
+            public Proposal apply(Throwable throwable) throws Throwable {
+                Logger.error("Failed to fetch keynote information", throwable);
+                Proposal proposal = new Proposal();
+                proposal.title = "COMING SOON!";
+                proposal.content = "";
+                Speaker speaker = new Speaker();
+                speaker.name = "";
+                speaker.pictureUrl = "";
+                speaker.twitterId = "";
+                proposal.speaker = speaker;
+                return proposal;
+            }
+        }, ctx);
     }
+
+    public Promise<Void> asyncSave() {
+        return Promise.promise(new Function0<Void>() {
+            @Override
+            public Void apply() throws Throwable {
+                save();
+                return null;
+            }
+        }, ctx);
+    }
+
+    public static Promise<Proposal> selectRandomTalk() {
+        return Promise.promise(new Function0<Proposal>() {
+            @Override
+            public Proposal apply() throws Throwable {
+                // randomly select one of the first
+                Long randomId = (long) (1 + Math.random() * (5 - 1));
+                return Proposal.find.byId(randomId);
+            }
+        }, ctx);
+    }
+
 }
